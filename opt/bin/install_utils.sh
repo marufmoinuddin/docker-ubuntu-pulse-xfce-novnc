@@ -24,7 +24,7 @@ deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/packages.microsoft.gpg] https:/
 
 bash /opt/bin/apt_install.sh code fonts-lohit-beng-bengali nemo mesa-utils neofetch 
 
-wget -O /tmp/wps-office.deb https://wdl1.cache.wps.cn/wpsdl/wpsoffice/download/linux/11.1.0.11654/wps-office_11.1.0.11654_amd64.deb
+wget -O /tmp/wps-office.deb https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/linux/11723/wps-office_11.1.0.11723.XA_amd64.deb
 /opt/bin/apt_install.sh /tmp/wps-office.deb
 
 bash /opt/bin/apt_clean.sh
