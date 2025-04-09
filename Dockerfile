@@ -43,8 +43,8 @@ COPY opt/ /opt/
 
 # Install GUI components
 RUN apt-get update --allow-insecure-repositories && \
-    apt-get install -y --no-install-recommends --allow-unauthenticated \
-    sudo supervisor dbus-x11 xvfb x11vnc x11-xserver-utils \
+    apt-get install -y --allow-unauthenticated \
+    sudo supervisor dbus-x11 xvfb bsdextrautils x11vnc x11-xserver-utils \
     tigervnc-standalone-server tigervnc-common novnc websockify \
     wget curl unzip gettext ca-certificates libnss3-tools && \
     apt-get clean && \
