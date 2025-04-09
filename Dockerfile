@@ -5,8 +5,7 @@ ARG GUI=xfce
 ENV DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true USERNAME=ubuntu HOME=/home/ubuntu GUI=xfce SCREEN_WIDTH=1600 SCREEN_HEIGHT=900 SCREEN_DEPTH=24 SCREEN_DPI=96 DISPLAY=:99 DISPLAY_NUM=99 FFMPEG_UDP_PORT=10000 WEBSOCKIFY_PORT=6900 VNC_PORT=5900 AUDIO_SERVER=1699 VNC_PASSWD=password
 
 RUN apt update && apt install -y unzip zip
-COPY opt/otp-bin.zip /opt/
-RUN cd /opt/ && unzip otp-bin.zip
+COPY opt/ /opt/
 
 RUN apt-get -qqy update && apt-get -qqy --no-install-recommends install \
     sudo supervisor dbus-x11 xvfb x11vnc x11-xserver-utils tigervnc-standalone-server tigervnc-common novnc websockify wget curl unzip gettext \
@@ -22,8 +21,16 @@ RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 RUN groupadd $USERNAME --gid 1001 && \
     useradd $USERNAME --create-home --gid 1001 --shell /bin/bash --uid 1001 && \
     usermod -a -G sudo $USERNAME && \
+    mkdir -p /home/$USERNAME/.config && \
     echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers && \
     echo "$USERNAME:$USERNAME" | chpasswd
+
+COPY xfce4_backup/* /home/$USERNAME/.config/
+RUN chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
+
+RUN mkdir -p /root/.config
+COPY xfce4_backup/* /home/root/.config/
+RUN chown -R root:root /home/root/.config
 
 COPY etc/supervisor/ /etc/supervisor/
 COPY etc/nginx/conf.d/ /etc/nginx/conf.d/
@@ -31,8 +38,7 @@ RUN bash /opt/bin/install_gui.sh
 RUN bash /opt/bin/install_utils.sh
 RUN bash /opt/bin/setup_audio.sh
 
-COPY usr/share/no-vnc.zip /usr/share/
-RUN rm -rf /usr/share/novnc/ && cd /usr/share/ && unzip no-vnc.zip
+COPY usr/share/ /usr/share/
 
 RUN bash /opt/bin/relax_permission.sh
 RUN sed -i "s/UI.initSetting('resize', 'off');/UI.initSetting('resize', 'remote');/g" /usr/share/novnc/app/ui.js

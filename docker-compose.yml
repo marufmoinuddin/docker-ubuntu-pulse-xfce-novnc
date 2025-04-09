@@ -2,18 +2,19 @@ version: '3.8'
 
 services:
   ubuntu22-pulse-novnc:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: marufmoinuddin/ubuntu22-pulse-novnc:latest
+    privileged: true  # Matches --privileged
+    shm_size: '1g'    # Matches --shm-size 1g
     ports:
-      - "6900:6900"  # WebSockify port for noVNC
-      - "5900:5900"  # VNC port
-      - "1699:1699"  # Audio server port
-      - "10000:10000/udp"  # FFmpeg UDP port
+      - "5900:5900"   # Maps VNC port (5900/tcp)
+      - "8080:10000"  # Maps PORT (10000) to host 8080
     environment:
-      - VNC_PASSWD=password
-    volumes:
-      - /dev/shm:/dev/shm
-    cap_add:
-      - SYS_ADMIN  # Required for some GUI-related operations
-    restart: unless-stopped
+      - VNC_PASSWD=password      # VNC password
+      - PORT=10000              # FFmpeg UDP port
+      - AUDIO_PORT=1699         # Audio server port
+      - WEBSOCKIFY_PORT=6900    # WebSockify port for noVNC
+      - VNC_PORT=5900           # VNC port inside container
+      - SCREEN_WIDTH=1024       # Screen width
+      - SCREEN_HEIGHT=768       # Screen height
+      - SCREEN_DEPTH=24         # Screen depth
+    restart: unless-stopped     # Keeps container running unless explicitly stopped

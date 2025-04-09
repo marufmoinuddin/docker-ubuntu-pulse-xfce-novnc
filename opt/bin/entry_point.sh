@@ -18,6 +18,9 @@ if ! whoami &> /dev/null; then
         HOME=/home/${USER_NAME:-ubuntu}
         cd $HOME
         echo "cd $HOME" >> $HOME/.bashrc
+        echo ubuntu | su ubuntu -c "sudo cp -R /root/.config/Thunar /home/${USER_NAME:-ubuntu}/.config/"
+        echo ubuntu | su ubuntu -c "sudo cp -R /root/.config/xfce4 /home/${USER_NAME:-ubuntu}/.config/"
+        echo ubuntu | su ubuntu -c "sudo cp -R /root/.config/xarchiver /home/${USER_NAME:-ubuntu}/.config/"
     fi
 fi
 
