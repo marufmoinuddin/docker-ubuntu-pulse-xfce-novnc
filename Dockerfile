@@ -97,13 +97,5 @@ RUN apt-get update --allow-insecure-repositories && \
     rm -rf /var/lib/apt/lists/* && \
     bash /opt/bin/apt_clean.sh
 
-# Create Firefox certificate configuration script
-RUN mkdir -p /opt/bin
-COPY opt/bin/setup_firefox_certs.sh /opt/bin/ || echo 'Firefox cert script not found, skipping'
-RUN if [ -f /opt/bin/setup_firefox_certs.sh ]; then \
-    chmod +x /opt/bin/setup_firefox_certs.sh && \
-    bash /opt/bin/setup_firefox_certs.sh; \
-    fi
-
 USER ubuntu
 CMD ["/opt/bin/entry_point.sh"]
