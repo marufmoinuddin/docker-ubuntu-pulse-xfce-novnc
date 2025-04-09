@@ -1,24 +1,24 @@
 favorites=xfce4-web-browser.desktop,xfce4-mail-reader.desktop,xfce4-file-manager.desktop,xfce4-terminal-emulator.desktop
-recent=code.desktop,xfce4-web-browser.desktop,xfce4-terminal-emulator.desktop,org.xfce.ristretto.desktop,audacity.desktop,stacer.desktop,xfce4-file-manager.desktop
-button-icon=xfce4-whiskermenu
+recent=xfce4-file-manager.desktop
+button-icon=org.xfce.panel.whiskermenu
 button-single-row=false
 show-button-title=false
 show-button-icon=true
 launcher-show-name=true
 launcher-show-description=true
 launcher-show-tooltip=true
-launcher-icon-size=3
+launcher-icon-size=2
 hover-switch-category=false
 category-show-name=true
 category-icon-size=1
 sort-categories=true
-view-mode=0
+view-mode=1
 default-category=0
 recent-items-max=10
 favorites-in-recent=true
-position-search-alternate=true
+position-search-alternate=false
 position-commands-alternate=false
-position-categories-alternate=true
+position-categories-alternate=false
 position-categories-horizontal=false
 stay-on-focus-out=false
 profile-shape=0
@@ -48,7 +48,7 @@ command-menueditor=menulibre
 show-command-menueditor=true
 command-profile=mugshot
 show-command-profile=true
-search-actions=5
+search-actions=6
 
 [action0]
 name=Man Pages
@@ -57,24 +57,30 @@ command=exo-open --launch TerminalEmulator man %s
 regex=false
 
 [action1]
-name=Web Search
+name=Search the Web
 pattern=?
 command=exo-open --launch WebBrowser https://duckduckgo.com/?q=%u
 regex=false
 
 [action2]
+name=Search for Files
+pattern=-
+command=catfish --path=~ --start %s
+regex=false
+
+[action3]
 name=Wikipedia
 pattern=!w
 command=exo-open --launch WebBrowser https://en.wikipedia.org/wiki/%u
 regex=false
 
-[action3]
+[action4]
 name=Run in Terminal
 pattern=!
 command=exo-open --launch TerminalEmulator %s
 regex=false
 
-[action4]
+[action5]
 name=Open URI
 pattern=^(file|http|https):\\/\\/(.*)$
 command=exo-open \\0
