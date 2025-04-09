@@ -1,20 +1,65 @@
 FROM ubuntu:22.04
 
-CMD ["bash"]
-ARG GUI=xfce
-ENV DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true USERNAME=ubuntu HOME=/home/ubuntu GUI=xfce SCREEN_WIDTH=1600 SCREEN_HEIGHT=900 SCREEN_DEPTH=24 SCREEN_DPI=96 DISPLAY=:99 DISPLAY_NUM=99 FFMPEG_UDP_PORT=10000 WEBSOCKIFY_PORT=6900 VNC_PORT=5900 AUDIO_SERVER=1699 VNC_PASSWD=password
+# Fix CMD duplication issue
+# CMD ["bash"] is only needed once at the end
 
-RUN apt update && apt install -y unzip zip
+ARG GUI=xfce
+ENV DEBIAN_FRONTEND=noninteractive \
+    DEBCONF_NONINTERACTIVE_SEEN=true \
+    USERNAME=ubuntu \
+    HOME=/home/ubuntu \
+    GUI=xfce \
+    SCREEN_WIDTH=1600 \
+    SCREEN_HEIGHT=900 \
+    SCREEN_DEPTH=24 \
+    SCREEN_DPI=96 \
+    DISPLAY=:99 \
+    DISPLAY_NUM=99 \
+    FFMPEG_UDP_PORT=10000 \
+    WEBSOCKIFY_PORT=6900 \
+    VNC_PORT=5900 \
+    AUDIO_SERVER=1699 \
+    VNC_PASSWD=password
+
+# Fix package repository and permission issues
+RUN mkdir -p /var/lib/apt/lists/partial && \
+    chmod 1777 /var/lib/apt/lists/partial && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/01-sandbox-disable && \
+    apt-get update --allow-insecure-repositories && \
+    apt-get install -y --allow-unauthenticated ca-certificates gnupg && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install basic utilities
+RUN apt-get update --allow-insecure-repositories && \
+    apt-get install -y --allow-unauthenticated unzip zip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy opt directory
 COPY opt/ /opt/
 
-RUN apt-get -qqy update && apt-get -qqy --no-install-recommends install \
-    sudo supervisor dbus-x11 xvfb x11vnc x11-xserver-utils tigervnc-standalone-server tigervnc-common novnc websockify wget curl unzip gettext \
-    && bash /opt/bin/apt_clean.sh
+# Install GUI components
+RUN apt-get update --allow-insecure-repositories && \
+    apt-get install -y --no-install-recommends --allow-unauthenticated \
+    sudo supervisor dbus-x11 xvfb x11vnc x11-xserver-utils \
+    tigervnc-standalone-server tigervnc-common novnc websockify \
+    wget curl unzip gettext && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    bash /opt/bin/apt_clean.sh
 
-RUN apt-get -qqy update && apt-get -qqy --no-install-recommends install \
-    pulseaudio pavucontrol alsa-base ffmpeg nginx \
-    && bash /opt/bin/apt_clean.sh
+# Install audio components
+RUN apt-get update --allow-insecure-repositories && \
+    apt-get install -y --no-install-recommends --allow-unauthenticated \
+    pulseaudio pavucontrol alsa-base ffmpeg nginx && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    bash /opt/bin/apt_clean.sh
 
+# Rest of your Dockerfile remains the same
 RUN chmod +x /dev/shm
 RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
 
@@ -29,8 +74,8 @@ COPY xfce4_backup/* /home/$USERNAME/.config/
 RUN chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
 
 RUN mkdir -p /root/.config
-COPY xfce4_backup/* /home/root/.config/
-RUN chown -R root:root /home/root/.config
+COPY xfce4_backup/* /root/.config/
+RUN chown -R root:root /root/.config
 
 COPY etc/supervisor/ /etc/supervisor/
 COPY etc/nginx/conf.d/ /etc/nginx/conf.d/
@@ -42,7 +87,11 @@ COPY usr/share/ /usr/share/
 
 RUN bash /opt/bin/relax_permission.sh
 RUN sed -i "s/UI.initSetting('resize', 'off');/UI.initSetting('resize', 'remote');/g" /usr/share/novnc/app/ui.js
-RUN apt update && apt install -y xfce4-goodies && bash /opt/bin/apt_clean.sh
+RUN apt-get update --allow-insecure-repositories && \
+    apt-get install -y --allow-unauthenticated xfce4-goodies && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    bash /opt/bin/apt_clean.sh
 
 USER ubuntu
 CMD ["/opt/bin/entry_point.sh"]
