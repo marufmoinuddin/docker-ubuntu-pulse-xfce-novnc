@@ -16,12 +16,12 @@ echo '
 deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main
 ' | tee /etc/apt/sources.list.d/brave-browser-release.list
 
-apt install -y htop terminator software-properties-common \
+apt-get -qqy update && apt-get -qqy install htop terminator software-properties-common \
     gpg-agent apt-transport-https brave-browser \
     papirus-icon-theme code fonts-lohit-beng-bengali \
     nemo mesa-utils git nano neofetch
 
 wget -O /tmp/wps-office.deb https://wdl1.pcfg.cache.wpscdn.com/wpsdl/wpsoffice/download/linux/11723/wps-office_11.1.0.11723.XA_amd64.deb
-apt install -y /tmp/wps-office.deb
+apt-get -qqy update && apt-get -qqy install /tmp/wps-office.deb
 
 bash /opt/bin/apt_clean.sh

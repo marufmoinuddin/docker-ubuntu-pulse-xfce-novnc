@@ -2,7 +2,7 @@
 
 if [ "${GUI}" == "xfce" ]
 then
-    apt install -y \
+    apt-get -qqy update && apt-get -qqy install \
         xfce4 xfce4-goodies \
     && bash /opt/bin/apt_clean.sh
 
