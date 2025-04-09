@@ -70,12 +70,16 @@ RUN groupadd $USERNAME --gid 1001 && \
     echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers && \
     echo "$USERNAME:$USERNAME" | chpasswd
 
-COPY xfce4_backup/* /home/$USERNAME/.config/
-RUN chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
+# Create default XFCE4 config directories instead of copying them
+RUN mkdir -p /home/$USERNAME/.config/xfce4/desktop && \
+    mkdir -p /home/$USERNAME/.config/xfce4/panel && \
+    mkdir -p /home/$USERNAME/.config/xfce4/xfconf/xfce-perchannel-xml && \
+    chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
 
-RUN mkdir -p /root/.config
-COPY xfce4_backup/* /root/.config/
-RUN chown -R root:root /root/.config
+RUN mkdir -p /root/.config/xfce4/desktop && \
+    mkdir -p /root/.config/xfce4/panel && \
+    mkdir -p /root/.config/xfce4/xfconf/xfce-perchannel-xml && \
+    chown -R root:root /root/.config
 
 COPY etc/supervisor/ /etc/supervisor/
 COPY etc/nginx/conf.d/ /etc/nginx/conf.d/
@@ -92,6 +96,14 @@ RUN apt-get update --allow-insecure-repositories && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     bash /opt/bin/apt_clean.sh
+
+# Create Firefox certificate configuration script
+RUN mkdir -p /opt/bin
+COPY opt/bin/setup_firefox_certs.sh /opt/bin/ || echo "Firefox cert script not found, skipping"
+RUN if [ -f /opt/bin/setup_firefox_certs.sh ]; then \
+    chmod +x /opt/bin/setup_firefox_certs.sh && \
+    bash /opt/bin/setup_firefox_certs.sh; \
+    fi
 
 USER ubuntu
 CMD ["/opt/bin/entry_point.sh"]
