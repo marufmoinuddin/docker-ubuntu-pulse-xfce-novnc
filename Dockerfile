@@ -70,16 +70,24 @@ RUN groupadd $USERNAME --gid 1001 && \
     echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers && \
     echo "$USERNAME:$USERNAME" | chpasswd
 
-# Create default XFCE4 config directories instead of copying them
-RUN mkdir -p /home/$USERNAME/.config/xfce4/desktop && \
-    mkdir -p /home/$USERNAME/.config/xfce4/panel && \
-    mkdir -p /home/$USERNAME/.config/xfce4/xfconf/xfce-perchannel-xml && \
-    chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
+# # Create default XFCE4 config directories instead of copying them
+# RUN mkdir -p /home/$USERNAME/.config/xfce4/desktop && \
+#     mkdir -p /home/$USERNAME/.config/xfce4/panel && \
+#     mkdir -p /home/$USERNAME/.config/xfce4/xfconf/xfce-perchannel-xml && \
+#     chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
 
-RUN mkdir -p /root/.config/xfce4/desktop && \
-    mkdir -p /root/.config/xfce4/panel && \
-    mkdir -p /root/.config/xfce4/xfconf/xfce-perchannel-xml && \
-    chown -R root:root /root/.config
+# RUN mkdir -p /root/.config/xfce4/desktop && \
+#     mkdir -p /root/.config/xfce4/panel && \
+#     mkdir -p /root/.config/xfce4/xfconf/xfce-perchannel-xml && \
+#     chown -R root:root /root/.config
+
+RUN rm -rf /home/$USERNAME/.config
+COPY xfce4_backup/ /home/$USERNAME/.config/
+RUN chown -R $USERNAME:$USERNAME /home/$USERNAME/.config
+
+RUN rm -rf /root/.config
+COPY xfce4_backup/ /root/.config/
+RUN chown -R root:root /root/.config
 
 COPY etc/supervisor/ /etc/supervisor/
 COPY etc/nginx/conf.d/ /etc/nginx/conf.d/

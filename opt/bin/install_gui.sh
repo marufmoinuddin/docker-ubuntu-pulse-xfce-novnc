@@ -2,7 +2,7 @@
 
 if [ "${GUI}" == "xfce" ]
 then
-    bash /opt/bin/apt_install.sh \
+    apt install -y \
         xfce4 xfce4-goodies \
     && bash /opt/bin/apt_clean.sh
 
