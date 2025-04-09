@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  ubuntu22-pulse-novnc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6900:6900"  # WebSockify port for noVNC
+      - "5900:5900"  # VNC port
+      - "1699:1699"  # Audio server port
+      - "10000:10000/udp"  # FFmpeg UDP port
+    environment:
+      - VNC_PASSWD=password
+    volumes:
+      - /dev/shm:/dev/shm
+    cap_add:
+      - SYS_ADMIN  # Required for some GUI-related operations
+    restart: unless-stopped
