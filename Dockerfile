@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM debian:bookworm
 
 # Fix CMD duplication issue
 # CMD ["bash"] is only needed once at the end
@@ -6,15 +6,15 @@ FROM ubuntu:22.04
 ARG GUI=xfce
 ENV DEBIAN_FRONTEND=noninteractive \
     DEBCONF_NONINTERACTIVE_SEEN=true \
-    USERNAME=ubuntu \
-    HOME=/home/ubuntu \
+    USERNAME=debian \
+    HOME=/home/debian \
     GUI=xfce \
     SCREEN_WIDTH=1600 \
     SCREEN_HEIGHT=900 \
     SCREEN_DEPTH=24 \
     SCREEN_DPI=96 \
-    DISPLAY=:99 \
-    DISPLAY_NUM=99 \
+    DISPLAY=:0 \
+    DISPLAY_NUM=0 \
     FFMPEG_UDP_PORT=10000 \
     WEBSOCKIFY_PORT=6900 \
     VNC_PORT=5900 \
@@ -97,5 +97,5 @@ RUN apt-get update --allow-insecure-repositories && \
     rm -rf /var/lib/apt/lists/* && \
     bash /opt/bin/apt_clean.sh
 
-USER ubuntu
+USER debian
 CMD ["/opt/bin/entry_point.sh"]
