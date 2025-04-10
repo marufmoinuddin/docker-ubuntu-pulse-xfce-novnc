@@ -54,7 +54,7 @@ RUN apt-get update --allow-insecure-repositories && \
 # Install audio components
 RUN apt-get update --allow-insecure-repositories && \
     apt-get install -y --no-install-recommends --allow-unauthenticated \
-    pulseaudio pavucontrol alsa-base ffmpeg nginx && \
+    pulseaudio pavucontrol alsa-utils ffmpeg nginx && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     bash /opt/bin/apt_clean.sh
